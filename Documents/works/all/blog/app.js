@@ -3,22 +3,11 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const _ = require("lodash");
-const multer = require("multer");
-const util = require("util");
 const { MongoClient } = require('mongodb');
 require('dotenv').config();
-const { GridFsStorage } = require("multer-gridfs-storage");
 
 const app = express();
 const client = new MongoClient(process.env.databaseLink);
-const imagestorageengine = multer.diskStorage({
-  destination:(request,file,callback) => callback(null,'mongodb+srv://haneya20yo:20180221404@cluster0.aehspdr.mongodb.net/?retryWrites=true&w=majority'),filename:(request,file,callback) => callback(null,Date.now()+'_'+file.originalname)
-})
-var storage = new GridFsStorage({
-  url: 'mongodb+srv://haneya20yo:20180221404@cluster0.aehspdr.mongodb.net/?retryWrites=true&w=majority/blog',
-  options: { useNewUrlParser: true, useUnifiedTopology: true },
-  file: (req, file) => `${Date.now()}--${file.originalname}`
-});
 const upload = multer({storage:imagestorageengine});
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
