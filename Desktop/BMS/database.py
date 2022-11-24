@@ -30,7 +30,9 @@ def gettransactions(ID):
     c.execute('SELECT * FROM Transaction WHERE customer_id=' + str(ID))
     data=c.fetchall()
     return data
-
+def update(ID,value):
+    print("UPDATE")
+    c.execute('UPDATE account SET balance='+value+' WHERE account_id='+ID)
 def branchname(ID):
     c.execute('SELECT name FROM branch WHERE IFSC=' + str(ID))
     data=c.fetchone()
@@ -48,17 +50,22 @@ def insert(table, values):
     print(values)
     # st.success("value added successfully")
 
+def removeemployee(i):
+    q = 'DELETE FROM employee WHERE employee_id = '+str(i)
+    c.execute(q)
+    mydb.commit()
+    # st.success('Employee removed')
+def removecustomer(i):
+    q = 'DELETE FROM customer WHERE customer_id ='+str(i)
+    c.execute(q)
+    mydb.commit()
+    # st.success('Employee removed')
+def removeaccount(i):
+    q = 'DELETE FROM account WHERE account_id ='+str(i)
+    c.execute(q)
+    mydb.commit()
+
+
+
 def runquery(a):
     c.execute(a)
-
-def removeemployee(i):
-    q = 'DELETE FROM employee WHERE employee_id = '+i
-    c.execute(q)
-    mydb.commit()
-    # st.success('Employee removed')
-
-def removecustomer(i):
-    q = 'DELETE FROM customer WHERE customer_id ='+i
-    c.execute(q)
-    mydb.commit()
-    # st.success('Employee removed')

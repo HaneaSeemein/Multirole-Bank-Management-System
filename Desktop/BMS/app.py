@@ -10,9 +10,22 @@ mydb = mysql.connector.connect(
     user="root",
     database="Bankdb"
 )
+c = mydb.cursor()
+c.execute("use Bank;")
+role = "Admin"
+ID = 0
+# placeholder=st.empty()
+# with placeholder.container():
+#  st.header("Login")
+#  trole = st.radio("Role",('Customer', 'Employee', 'Admin'))
+#  TID = st.number_input("ID",max_value=99999)
+# if st.button("Submit",key="login"):
+#             ID = TID
+#             role = trole
+#             placeholder.empty()
 
-def main():
- if(role=="Customer"):
+
+if(role=="Customer"):
     customerprofile=getcustomer(ID)
     # CID = customerprofile[0]
     # cIFSC = customerprofile[3]
@@ -67,7 +80,7 @@ def main():
         st.write("No transactions yet!")
 
 
- elif(role == "Employee"):
+elif(role == "Employee"):
     st.header("Employee")
     transaction, loan, account = st.tabs(["Transaction","Loan","Account"])
     with transaction:
@@ -83,9 +96,12 @@ def main():
         tAmount= st.number_input("Amount",value=1000,step=200,min_value=200,key="tamount")
         transact = st.form_submit_button("Transact")
         if transact:
-          print('ok')
+          print('transaction successful')
           tvalues = (TID,int(tdate),tAmount,toID)
           insert('transaction',tvalues)
+          bal=getaccount(toID)
+          new_balance = bal[1]+tAmount
+          update(toID,new_balance)
 
     with loan:
         with st.form(key="loan"):
@@ -97,6 +113,9 @@ def main():
             leid = st.number_input("served employee's ID",max_value=99999)
             lifsc = st.number_input("branch's IFSC code",min_value=1000,max_value=9999)
             apply = st.form_submit_button("Apply")
+            if apply:
+                print("Applied")
+                insert('loan',(lid,lamount,ltime,ltype,lcid,leid,lifsc))
     with account:
         with st.form(key="account"):
             aid= st.number_input("Account ID",max_value=99999)
@@ -105,17 +124,29 @@ def main():
             aifsc = st.number_input("branch's IFSC code",min_value=1000,max_value=9999)
             acid = st.number_input("customer's ID",max_value=99999)
             create = st.form_submit_button("Create")
-            # values = (aid,abalance,atype,aifsc,acid)
-            # insert('account',values)
+            if create:
+                print("Created")
+                insert('account',(aid,abalance,atype,aifsc,acid))
 
 
- elif (role=="Admin"):
+elif (role=="Admin"):
     st.title("Administrator")
-    hireemployee, fireemployee, deletecustomer = st.tabs(["Hire", "Fire", "Delete customer"])
+    hireemployee, fireemployee, deletecustomer, deleteaccount, custom = st.tabs(["Hire", "Fire", "Delete customer","Delete account","Custom"])
     with deletecustomer:
         st.header("Delete customer")
         tdcid = st.number_input("enter the customer's ID",key="1",max_value=99999)
         if st.button("Delete",key="11"):
+         DID=tdcid
+         removecustomer(DID)
+    with custom:
+        st.header("All operations")
+        query = st.text_input("enter your query",key="2831")
+        runquery(query)
+
+    with deleteaccount:
+        st.header("Delete account")
+        tdcid = st.number_input("enter the account's ID",key="4",max_value=99999)
+        if st.button("Delete",key="141"):
          DID=tdcid
          removecustomer(DID)
     with fireemployee:
@@ -137,19 +168,4 @@ def main():
                 hifsc = st.number_input("IFSC code",key="38",min_value=1000,max_value=9999)
                 submithere = st.form_submit_button('Submit')
                 if submithere:
-                    st.write("//hey//")
-
-c = mydb.cursor()
-c.execute("use Bank;")
-role = "USER"
-ID = None
-placeholder=st.empty()
-with placeholder.container():
- st.header("Login")
- trole = st.radio("Role",('Customer', 'Employee', 'Admin'))
- TID = st.number_input("ID",max_value=99999)
-if st.button("Submit",key="login"):
-            ID = TID
-            role = trole
-            main()
-            placeholder.empty()
+                    insert('employee',(heid,hname,role,hsalary,hphone,haddress,hpoints,hifsc))
