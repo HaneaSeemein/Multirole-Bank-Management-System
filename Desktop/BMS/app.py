@@ -10,22 +10,9 @@ mydb = mysql.connector.connect(
     user="root",
     database="Bankdb"
 )
-c = mydb.cursor()
-c.execute("use Bank;")
-role = "Employee"
-ID = 0
-# placeholder=st.empty()
-# with placeholder.container():
-#         st.header("Login")
-#         trole = st.radio("Role",('Customer', 'Employee', 'Admin'))
-#         TID = st.number_input("ID",max_value=99999)
-#         if st.button("Submit",key="login"):
-#             ID = TID
-#             role = trole
-#             placeholder.empty()
 
-
-if(role=="Customer"):
+def main():
+ if(role=="Customer"):
     customerprofile=getcustomer(ID)
     # CID = customerprofile[0]
     # cIFSC = customerprofile[3]
@@ -80,7 +67,7 @@ if(role=="Customer"):
         st.write("No transactions yet!")
 
 
-elif(role == "Employee"):
+ elif(role == "Employee"):
     st.header("Employee")
     transaction, loan, account = st.tabs(["Transaction","Loan","Account"])
     with transaction:
@@ -91,7 +78,7 @@ elif(role == "Employee"):
         for i in x:
             if (i!='-'): y = y+i
         tdate = y[0:8]
-        toID= st.number_input("Customer's account ID",key="toID",value=10000,max_value=99999)
+        toID= st.number_input("Customer's account ID",key="toID",value=0,max_value=99999)
         # fromID= st.number_input("Customer's ID",key="fromID",value=10000,max_value=99999)
         tAmount= st.number_input("Amount",value=1000,step=200,min_value=200,key="tamount")
         transact = st.form_submit_button("Transact")
@@ -122,7 +109,7 @@ elif(role == "Employee"):
             # insert('account',values)
 
 
-elif (role=="Admin"):
+ elif (role=="Admin"):
     st.title("Administrator")
     hireemployee, fireemployee, deletecustomer = st.tabs(["Hire", "Fire", "Delete customer"])
     with deletecustomer:
@@ -151,3 +138,18 @@ elif (role=="Admin"):
                 submithere = st.form_submit_button('Submit')
                 if submithere:
                     st.write("//hey//")
+
+c = mydb.cursor()
+c.execute("use Bank;")
+role = "USER"
+ID = None
+placeholder=st.empty()
+with placeholder.container():
+ st.header("Login")
+ trole = st.radio("Role",('Customer', 'Employee', 'Admin'))
+ TID = st.number_input("ID",max_value=99999)
+if st.button("Submit",key="login"):
+            ID = TID
+            role = trole
+            main()
+            placeholder.empty()
