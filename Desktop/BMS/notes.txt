@@ -1,0 +1,12 @@
+customer:
+-profile
+-account
+-loans
+employee: 
+-customer money transfer(with challan number)
+-loan application
+-profile
+-register a customer
+admin: 
+-delete a customer/Employee
+-add an employee

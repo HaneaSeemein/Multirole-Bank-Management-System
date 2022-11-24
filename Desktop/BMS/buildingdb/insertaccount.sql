@@ -1,0 +1,1 @@
+insert into account values (10000, 0, 'Count', 1000, 10000);
