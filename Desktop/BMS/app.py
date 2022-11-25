@@ -30,7 +30,11 @@ if(role=="Customer"):
      branch = branchname(customerprofile[3])
     except:
      branch = "master"
-    st.header("Hi "+customerprofile[1])
+    try:
+     st.header("Hi "+customerprofile[1])
+    except:
+     st.warning("Inncorrect customer ID")
+     st.experimental_rerun
     profile, account, loan, history = st.tabs(["Profile", "Accounts", "Loan", "History"])
     with profile:
         # st.header("//customer data//")

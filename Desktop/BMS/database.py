@@ -10,9 +10,10 @@ mydb = mysql.connector.connect(
 c = mydb.cursor()
 
 def getcustomer(ID):
-    c.execute('SELECT * FROM customer WHERE customer_id=' + str(ID))
-    data=c.fetchone()
-    return data
+     c.execute('SELECT * FROM customer WHERE customer_id=' + str(ID))
+     data=c.fetchone()
+     return data
+
 def getaccount(ID):
     c.execute('SELECT * FROM account WHERE customer_id=' + str(ID))
     data=c.fetchone()
