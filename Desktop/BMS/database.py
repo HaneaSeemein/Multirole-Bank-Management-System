@@ -26,10 +26,8 @@ def getloan(ID):
 def getemployee(ID):
     c.execute('SELECT * FROM employee WHERE employee_id=' + str(ID))
     data=c.fetchone()
-    return data
-def gettransactions(ID):
-    c.execute('SELECT * FROM transaction WHERE account_id=' + str(ID))
-    data=c.fetchall()
+    # print(ID)
+    # print(data)
     return data
 def update(ID,value):
     # print("UPDATE")
@@ -39,6 +37,14 @@ def branchname(ID):
     data=c.fetchone()
     return data
 
+def gettransactions(ID):
+    c.execute('SELECT * FROM transaction WHERE account_id=' + str(ID))
+    data=c.fetchall()
+    return data
+def senttransactions(ID):
+    c.execute('SELECT * FROM transaction WHERE customer_id=' + str(ID))
+    data=c.fetchall()
+    return data
 # def transaction(values):
 #     c.execute('INSERT INTO transaction values '+values)
 def insert(table, values):
@@ -71,3 +77,5 @@ def removeaccount(i):
 
 def runquery(a):
     c.execute(a)
+    r = c.fetchall()
+    return r

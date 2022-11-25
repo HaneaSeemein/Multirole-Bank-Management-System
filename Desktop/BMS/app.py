@@ -30,14 +30,9 @@ if(role=="Customer"):
      branch = branchname(customerprofile[3])
     except:
      branch = "master"
-    try:
-     st.header("Hi "+customerprofile[1])
-    except:
-     st.warning("Inncorrect customer ID")
-     st.experimental_rerun
+    st.header("Hi "+customerprofile[1])
     profile, account, loan, history = st.tabs(["Profile", "Accounts", "Loan", "History"])
     with profile:
-        # st.header("//customer data//")
         st.write("ID          : "+str(ID))
         st.write("Phone       : "+customerprofile[2])
         st.write("Address     : "+customerprofile[4])
@@ -46,7 +41,7 @@ if(role=="Customer"):
     try:
      customeraccount = getaccount(ID)
      with account:
-        st.write("Account ID: "+str(customeraccount[0]))
+        st.header("id: "+str(customeraccount[0]))
         st.write("IFSC code : "+str(customeraccount[3]))
         st.write("Balance   : "+str(customeraccount[1]))
         st.write("Type      : "+customeraccount[2])
@@ -68,11 +63,18 @@ if(role=="Customer"):
      with loan:
         st.write("No loans Yay!")
     try:
-     customerhistory = gettransactions(customeraccount[0])
-    #  customeraccount = getaccount(ID)
+     customerrecieved = gettransactions(customeraccount[0])
      with history:
-        for transaction in customerhistory:
-            st.header(transaction[0])
+        st.header("Recieved")
+        for transaction in customerrecieved:
+            st.subheader(transaction[0])
+            st.write("Amount : "+str(transaction[2]))
+            st.write("Date   : "+str(transaction[1])) 
+     customersent = senttransactions(customeraccount[0])
+     with history:
+        st.header("Sent")
+        for transaction in customersent:
+            st.subheader(transaction[0])
             st.write("Amount : "+str(transaction[2]))
             st.write("Date   : "+str(transaction[1])) 
     except:
@@ -81,12 +83,12 @@ if(role=="Customer"):
 
 
 elif(role == "Employee"):
-    placeholder.empty()
     ID = TID
     employeeprofile = getemployee(ID)
-    # st.session_state.load_state = True
+    placeholder.empty()
     st.header("Employee")
-    transaction, loan, account = st.tabs(["Transaction","Loan","Account"])
+    st.write("HELLO "+employeeprofile[1])
+    transaction, loan, account, work = st.tabs(["Transaction","Loan","Account","Customers"])
     with transaction:
      with st.form(key="transaction"):
         TID = random.randint(10000,99999)
@@ -102,18 +104,22 @@ elif(role == "Employee"):
         if transact:
           tvalues = (TID,int(tdate),tAmount,toID,fromID)
           insert('transaction',tvalues)
-        #   bal=getaccount(toID)
-        #   new_balance = bal[1]+tAmount
-        #   update(toID,new_balance)
+          bal=getaccount(toID)
+          new_balance = int(bal[1])+tAmount
+          update(toID,new_balance)
 
     with loan:
         with st.form(key="loan"):
-            lid= st.number_input("Loan ID",max_value=99999)
+            lid=str(datetime.datetime.now())
+            y = ''
+            for i in lid:
+             if (i!='-' and  i!=':' and i!=' '): y = y+i
+            lid = int(y[3:12])
             lamount=st.number_input("Amount",value=200000,step=20000)
             ltime=st.number_input("time(in years)",value=2,step=1,min_value=1,max_value=30)
             ltype=st.selectbox("Type",("Home","Personal","Education","Fund"))
             lcid = st.number_input("customer's ID",max_value=99999)
-            leid = st.number_input("served employee's ID",max_value=99999)
+            leid = ID
             lifsc = st.number_input("branch's IFSC code",min_value=1000,max_value=9999)
             apply = st.form_submit_button("Apply")
             if apply:
@@ -130,12 +136,17 @@ elif(role == "Employee"):
             if create:
                 print("Created")
                 insert('account',(aid,abalance,atype,aifsc,acid))
+    with work:
+        st.header("loans")
+        query = 'SELECT loan.loan_id,customer.name,loan.type,customer.phone,loan.amount FROM loan INNER JOIN customer ON loan.customer_id = customer.customer_id AND loan.employee_id ='+ str(ID) 
+        sol = runquery(query)
+        df = pd.DataFrame(sol)
+        st.dataframe(df)
 
 
-elif (role=="Admin"):
+elif (role=="Admin" and TID==9090):
     placeholder.empty()
     ID = TID
-    # st.session_state.load_state = True
     st.title("Administrator")
     hireemployee, fireemployee, deletecustomer, deleteaccount, custom = st.tabs(["Hire", "Fire", "Delete customer","Delete account","Custom"])
     with deletecustomer:
@@ -147,8 +158,11 @@ elif (role=="Admin"):
     with custom:
         st.header("All operations")
         query = st.text_input("enter your query",key="2831")
-        runquery(query)
-
+        if st.button("Run"):
+         sol = runquery(query)
+         df = pd.DataFrame(sol)
+         st.dataframe(df)
+    
     with deleteaccount:
         st.header("Delete account")
         tdcid = st.number_input("enter the account's ID",key="4",max_value=99999)
