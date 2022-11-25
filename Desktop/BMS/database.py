@@ -5,7 +5,7 @@ import mysql.connector
 mydb = mysql.connector.connect(
     host="127.0.0.1",
     user="root",
-    database="Bankdb"
+    database="Bank"
 )
 c = mydb.cursor()
 
@@ -27,12 +27,12 @@ def getemployee(ID):
     data=c.fetchone()
     return data
 def gettransactions(ID):
-    c.execute('SELECT * FROM Transaction WHERE customer_id=' + str(ID))
+    c.execute('SELECT * FROM transaction WHERE account_id=' + str(ID))
     data=c.fetchall()
     return data
 def update(ID,value):
-    print("UPDATE")
-    c.execute('UPDATE account SET balance='+value+' WHERE account_id='+ID)
+    # print("UPDATE")
+    c.execute('UPDATE account SET balance='+str(value)+' WHERE account_id='+str(ID))
 def branchname(ID):
     c.execute('SELECT name FROM branch WHERE IFSC=' + str(ID))
     data=c.fetchone()
@@ -42,24 +42,25 @@ def branchname(ID):
 #     c.execute('INSERT INTO transaction values '+values)
 def insert(table, values):
  try:
-    q = 'INSERT INTO {} VALUES {}'.format(table,values)
-    print("check")
-    c.execute(q)
+    c.execute('INSERT INTO '+table+' VALUES '+str(values))
+    # q = 'INSERT INTO {} VALUES {}'.format(table,values)
+    # print(q)
+    # c.execute(q)
     mydb.commit()
- except:
-    print(values)
-    # st.success("value added successfully")
+    st.success("value added successfully")
+ except Exception as e:
+    st.write(e)
 
 def removeemployee(i):
     q = 'DELETE FROM employee WHERE employee_id = '+str(i)
     c.execute(q)
     mydb.commit()
-    # st.success('Employee removed')
+    st.success('Employee removed')
 def removecustomer(i):
     q = 'DELETE FROM customer WHERE customer_id ='+str(i)
     c.execute(q)
     mydb.commit()
-    # st.success('Employee removed')
+    st.success('Employee removed')
 def removeaccount(i):
     q = 'DELETE FROM account WHERE account_id ='+str(i)
     c.execute(q)

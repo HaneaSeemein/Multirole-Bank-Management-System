@@ -8,27 +8,23 @@ import pandas as pd
 mydb = mysql.connector.connect(
     host="127.0.0.1",
     user="root",
-    database="Bankdb"
+    database="Bank"
 )
 c = mydb.cursor()
 c.execute("use Bank;")
-role = "Admin"
+role = "User"
 ID = 0
-# placeholder=st.empty()
-# with placeholder.container():
-#  st.header("Login")
-#  trole = st.radio("Role",('Customer', 'Employee', 'Admin'))
-#  TID = st.number_input("ID",max_value=99999)
-# if st.button("Submit",key="login"):
-#             ID = TID
-#             role = trole
-#             placeholder.empty()
+placeholder=st.empty()
+with placeholder.container():
+ st.header("Login")
+ TID = st.number_input("ID",max_value=99999)
+ role = st.radio("Role",('None','Customer', 'Employee', 'Admin'))
 
 
 if(role=="Customer"):
+    placeholder.empty()
+    ID = TID
     customerprofile=getcustomer(ID)
-    # CID = customerprofile[0]
-    # cIFSC = customerprofile[3]
     customeraccount = getaccount(ID)
     try:
      branch = branchname(customerprofile[3])
@@ -68,7 +64,7 @@ if(role=="Customer"):
      with loan:
         st.write("No loans Yay!")
     try:
-     customerhistory = gettransactions(ID)
+     customerhistory = gettransactions(customeraccount[0])
     #  customeraccount = getaccount(ID)
      with history:
         for transaction in customerhistory:
@@ -81,6 +77,10 @@ if(role=="Customer"):
 
 
 elif(role == "Employee"):
+    placeholder.empty()
+    ID = TID
+    employeeprofile = getemployee(ID)
+    # st.session_state.load_state = True
     st.header("Employee")
     transaction, loan, account = st.tabs(["Transaction","Loan","Account"])
     with transaction:
@@ -92,16 +92,15 @@ elif(role == "Employee"):
             if (i!='-'): y = y+i
         tdate = y[0:8]
         toID= st.number_input("Customer's account ID",key="toID",value=0,max_value=99999)
-        # fromID= st.number_input("Customer's ID",key="fromID",value=10000,max_value=99999)
+        fromID= st.number_input("Customer's ID",key="fromID",value=10000,max_value=99999)
         tAmount= st.number_input("Amount",value=1000,step=200,min_value=200,key="tamount")
-        transact = st.form_submit_button("Transact")
+        transact = st.form_submit_button("Add money")
         if transact:
-          print('transaction successful')
-          tvalues = (TID,int(tdate),tAmount,toID)
+          tvalues = (TID,int(tdate),tAmount,toID,fromID)
           insert('transaction',tvalues)
-          bal=getaccount(toID)
-          new_balance = bal[1]+tAmount
-          update(toID,new_balance)
+        #   bal=getaccount(toID)
+        #   new_balance = bal[1]+tAmount
+        #   update(toID,new_balance)
 
     with loan:
         with st.form(key="loan"):
@@ -130,6 +129,9 @@ elif(role == "Employee"):
 
 
 elif (role=="Admin"):
+    placeholder.empty()
+    ID = TID
+    # st.session_state.load_state = True
     st.title("Administrator")
     hireemployee, fireemployee, deletecustomer, deleteaccount, custom = st.tabs(["Hire", "Fire", "Delete customer","Delete account","Custom"])
     with deletecustomer:
