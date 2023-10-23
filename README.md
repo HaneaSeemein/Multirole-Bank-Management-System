@@ -47,13 +47,13 @@ This is a Database Management System (DBMS) project for managing a bank. It incl
 
 ## ER Diagram
 
-![ER Diagram](pages/ERD.jpg)
+![ER Diagram](extras/ERD.jpg)
 
 The ER diagram illustrates the relationships between different entities in the database.
 
 ## Relational Diagram
 
-![Relational Diagram](pages/RD.jpg)
+![Relational Diagram](extras/RD.jpg)
 
 The relational diagram displays how the entities are organized into tables within the database, showcasing their attributes and relationships.
 
